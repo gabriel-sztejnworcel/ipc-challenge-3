@@ -4,6 +4,7 @@
 #include <fstream>
 #include <stdexcept>
 #include <iostream>
+#include <mutex>
 
 #define SERVICE_B_PORT 8081
 
@@ -84,6 +85,9 @@ WebServerConfig WebServer::load_config()
 
 void WebServer::write_log(const std::string& msg, const std::string& logfile_path)
 {
+    static std::mutex mtx;
+    std::lock_guard<std::mutex> lock_guard(mtx);
+    
     std::wstring path_wstr(logfile_path.begin(), logfile_path.end());
     
     HANDLE file_handle = CreateFile(
@@ -91,28 +95,32 @@ void WebServer::write_log(const std::string& msg, const std::string& logfile_pat
         GENERIC_WRITE,
         FILE_SHARE_READ,
         nullptr,
-        OPEN_EXISTING,
+        OPEN_ALWAYS,
         0,
         nullptr
     );
 
     if (file_handle == INVALID_HANDLE_VALUE)
     {
-        throw std::runtime_error("Failed to open log file");
+        throw std::runtime_error("Failed to open log file: " + std::to_string(GetLastError()));
     }
 
+    std::string msg_with_newline = msg + "\n";
     DWORD bytes_written = 0;
 
     BOOL result = WriteFile(
         file_handle,
-        msg.c_str(),
-        (DWORD)msg.length(),
+        msg_with_newline.c_str(),
+        (DWORD)msg_with_newline.length(),
         &bytes_written,
         nullptr
     );
 
     if (!result)
     {
-        throw std::runtime_error("Failed to write to log file");
+        CloseHandle(file_handle);
+        throw std::runtime_error("Failed to write to log file: " + std::to_string(GetLastError()));
     }
+
+    CloseHandle(file_handle);
 }
