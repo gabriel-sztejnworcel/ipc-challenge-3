@@ -31,10 +31,10 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config">
+    <None Include="deploy.cmd">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="deploy.cmd">
+    <None Include="permissions.ps1">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
