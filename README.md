@@ -10,4 +10,4 @@ The project also contains a deployment script, deploy.cmd, that:
 2. Run service A with the NETWORK SERVICE account
 3. Run service B with the SYSTEM account
 
-Your goal is to run code as SYSTEM. You are allowed to make changes in the folder where the applications are deployed (but you cannot replace the executables).
+Your goal is to run code as SYSTEM, using the techniques we discussed in class. You are allowed to make changes in the folder where the applications are deployed (but you cannot replace the executables).
